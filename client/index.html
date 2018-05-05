@@ -28,12 +28,17 @@
       <!-- Your HTML goes here! -->
         
 
-       <div id='roomSelect'></div>
+       <div class="dropdown">
+         <button class="dropdownbtn">Select the room</button>
+         <div id='roomSelect' class="dropdown-content"></div>
+       </div>
        
-       <form><input type ="text" name="createMessage" value="Create a message!"><input type="submit" value="Post"></form>
+       <form id="form"><input id="text" type ="text" name="createMessage" value="Create a message!"><button type='submit' class="postBtn">POST ME</button></form>
        </div> 
        <div id="chats">
      
     </div>
   </body>
 </html>
+
+
