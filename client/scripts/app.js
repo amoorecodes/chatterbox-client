@@ -23,9 +23,9 @@ let app = {
   messages: [],
   chatrooms: {},
   currentUser: window.location.search.split("=")[1],
-  currentRoom: $("#roomSelect option:checked").val() || "lobby"
+  currentRoom: 'default',
+  // $("#roomSelect option:selected").text() ||
 };
-
 //need to create a default state of the room 
 
 app.send = function(message) {
@@ -48,9 +48,9 @@ app.send = function(message) {
 
 app.init = function() {
   app.fetch();
-  app.renderRoom("Lobby");
-  app.renderRoom("hotel")
-  app.renderRoom("place")
+  // app.renderRoom("Lobby");
+  // app.renderRoom("hotel")
+  // app.renderRoom("place")
   // app.username = $()
 };
 
@@ -63,7 +63,15 @@ app.fetch = function() {
   contentType: 'application/json',
   success: function (data) {
     app.clearMessages();
-    data.results.forEach(message => app.renderMessage(message));
+    if (app.currentRoom === 'default') {
+      data.results.forEach(message => app.renderMessage(message));
+    }else {
+      data.results.forEach(message => { 
+        if (message.roomname === app.currentRoom) {
+          app.renderMessage(message);
+      }});
+    }
+    
     console.log("data:", data)
   },
   error: function (data) {
@@ -79,25 +87,36 @@ app.clearMessages = function() {
 };
 
 app.renderMessage = function(message) {
-  var div = $('<div></div>')
-  var a = $(`<a href="#" class="username">${message.username}</a>`)
+  //var regex = /[a-z0-9]/i
+  var input = _.escape(message.text);
+  var user = _.escape(message.username)
+
+  if(message.username !== undefined) {
+  var div = $(`<div class="${user}"></div>`)
+  var a = $(`<a href="#" class="username">${user}</a>`)
   a.on('click', app.handleUsernameClick);
-  var b = $(`<span>${message.text}</span>`);
+  var b = $(`<span>${input}</span><br>`);
   div.append(a).append(b);
   $('#chats').append(div);
+  }
   // $(`<span>${message.text}</span>`).appendTo('#chats');
   // $(`<div><a href="#" class="username">${message.username}</a><span>${message.text}</span></div>`).appendTo('#chats');
   // $('#chats').children().append(`<span>${message}</span>`);
 }
 
-app.renderRoom = function(room) {
-    this.chatrooms[room] = false;
-    $(`<a href="#">${room}</a>`).appendTo('#roomSelect');
+app.renderRoom = function(event) {
+    event.preventDefault();
+    var room = $('#roomText').val();
+    app.chatrooms[room] = false;
+    $(`<a href="#" class="${room}">${room}</a>`).appendTo('#roomSelect');
 }
 
 app.handleUsernameClick = function() {
-  console.log(window.location.search.slice(10))
-    app.myFriends[$(this).text()] = true;
+  // console.log("currentRoom:", app.currentRoom);
+  app.myFriends[$(this).text()] = true;
+  $(`.${$(this).text()}`).toggleClass('highlighted');
+  
+
 }
 
 app.handleSubmit = function(event) {
@@ -105,31 +124,67 @@ app.handleSubmit = function(event) {
 
   var message = {
     username: app.currentUser,
-    text: $('#text').val(),
-    room: app.currentRoom,
+    text: $('#message').val(),
+    roomname: $('#roomText').val()
   }
 
   app.send(message);
+  console.log("Message:", message)
+  console.log("Room:", $('#roomSelect option:selected').text())
  // $("form").submit(app.send($(':input'))) 
  // var regex = /[a-z0-9]/i regex.test(_____ pass what we want to test)
 
 }
 
+app.changeRoom = function() {
+  console.log($(this));
+  app.currentRoom = $(this).text();
+  // $('#roomSelect').val()
+  app.clearMessages();
+  app.fetch();
+  console.log("CurrentRoom:", app.currentRoom);
+}
 
+app.constFeed = function() {
+  app.fetch();
+  for(var key in app.myFriends) {
+    $(`.${key}`).addClass('highlighted');
+  }
+};
+
+// app.fetchRoom = function() {
+//   $.ajax({
+//   url: 'http://parse.la.hackreactor.com/chatterbox/classes/messages',
+//   type: 'GET',
+//   data: {order: "-createdAt"},
+//   contentType: 'application/json',
+//   success: function (data) {
+//     data.results.forEach(message => {
+//       if(app.currentRoom === message.roomname) {
+//       app.renderMessage(message);
+//     }
+//   });
+//   },
+//   });
+// }
 
 $(document).ready(function() {
   
   app.init();
-  setInterval(app.fetch, 2000);
+  setInterval(app.constFeed, 2000);
   $('.postBtn').on('click', app.handleSubmit);
-   
+  $('.addRoom').on('click', app.renderRoom); 
+  // $('#roomSelect').on('click', 'a', app.changeRoom);
+  $('#roomSelect').on('click', 'a', app.changeRoom);
+  // $('')
   //  $('body').on('click', 'a', function() {
   //   console.log('e');
   //   app.myFriends[$(this).text()] = true;
   // });
+
   
   // $("#input").submit(app.handleSubmit($(':input')))
-})
+});
 
 
 

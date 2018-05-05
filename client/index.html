@@ -7,6 +7,7 @@
 
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
       if (!/(&|\?)username=/.test(window.location.search)) {
@@ -28,12 +29,18 @@
       <!-- Your HTML goes here! -->
         
 
-       <div class="dropdown">
-         <button class="dropdownbtn">Select the room</button>
-         <div id='roomSelect' class="dropdown-content"></div>
-       </div>
+        <div class="dropdown">
+          <button class="dropdownbtn">Select the room</button>
+          <div id='roomSelect' class="dropdown-content">
+            <a href="#" class='lobby'>lobby</a>
+          </div>
+            
+        </div>
+        <form id='roomInput'><input id='roomText' type='text'>
+        <button type='submit' class='addRoom'>Add Room</button>
+        </form>
        
-       <form id="form"><input id="text" type ="text" name="createMessage" value="Create a message!"><button type='submit' class="postBtn">POST ME</button></form>
+       <form id="form"><input id="message" type ="text" name="createMessage" value="Create a message!"><button type='submit' class="postBtn">POST ME</button></form>
        </div> 
        <div id="chats">
      

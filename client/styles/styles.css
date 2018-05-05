@@ -69,6 +69,12 @@ form input[type=text] {
     font-weight: 800;
 }
 
+.highlighted {
+    font-weight: bold;
+    /*color: red;*/
+    /*background-color: blue;
+    opacity: 70%; */
+}
 .chat:hover {
     background-color: #ddd;
 }
@@ -123,6 +129,10 @@ form input[type=text] {
 .dropdown:hover .dropdown-content{
     display: block;
     
+}
+
+.username {
+    padding-right: 10px;
 }
 
 
